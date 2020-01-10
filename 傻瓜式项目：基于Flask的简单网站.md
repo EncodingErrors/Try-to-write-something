@@ -8,7 +8,7 @@
 ### 写一个“Hello World！”
 咱们有个习惯，不管第一次学什么语言用什么框架，都想尽办法弄个`"Hello World！"`出来，也是老传统了。那好，这次也弄出来，而且字要大，气势要足。
 根据新手教程，我们要先安装它，这简单，打开`cmd`先来一发：`pip install flask`，成了。
-下面正式开始第一步，在Python里导入它，并创建一个应用实例：
+下面正式开始，在Python里导入它，并创建一个应用实例：
 ```python
 from flask import Flask
 app = Flask(__name__)
@@ -21,7 +21,7 @@ def index():
   return "<h1>Hello World!</h1>"
 ```
 嗯？装饰器？啥玩意儿？这个函数就返回一个字符串？等等，这个字符串格式有点眼熟……等下，这就是传说中的html文本吗？！
-是的，这就结束了，`flask`自带开发服务器，现在运行它，就可以看到大且气势足的`"Hello World！"`……吗？
+是的，这就结束了，`flask`自带开发服务器，现在运行它，就可以看到大且气势足的`"Hello World！"`了……吗？
 不行！如果你是在`cmd`里调用的话，你要这样：
 ```text
 $ set FLASK_APP = 你刚写的东西.py
@@ -29,3 +29,13 @@ $ flask run
 * Serving Flask app "你刚写的东西"
 Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 ```
+但如果你不想写在`cmd`里，你也可以在写好的文件末尾加上熟悉的片段：
+```python
+if __name__ == "__main__":
+  app.run()
+```
+然后打开浏览器，网址输入：`http://localhost:5000/`，就可以看到……
+# Hello Word!
+结束，第一个网站建好了（
+## 下一步，开始设计
+现在就看兴趣想做什么网站，当时在玩明日方舟，看到公开招募网站还挺实用的，就自己打算建一个。
