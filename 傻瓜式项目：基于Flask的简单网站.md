@@ -34,8 +34,15 @@ Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 if __name__ == "__main__":
   app.run()
 ```
-然后打开浏览器，网址输入：`http://localhost:5000/`，就可以看到……
-# Hello Word!
-结束，第一个网站建好了（
-## 下一步，开始设计
+然后打开浏览器，网址输入：`http://localhost:5000/`，就可以看到非常巨大的`Hello World!`了。结束，第一个网站建好了，鼓掌（
+### 下一步，开始设计
 现在就看兴趣想做什么网站，当时在玩明日方舟，看到公开招募网站还挺实用的，就自己打算建一个。
+<script src="mermaid.full.min.js"></script>
+<div class="mermaid">
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+</div>
+
