@@ -37,12 +37,7 @@ if __name__ == "__main__":
 ```
 然后打开浏览器，网址输入：`http://localhost:5000/`，就可以看到非常巨大的`Hello World!`了。结束，第一个网站建好了，鼓掌（
 ### 开始起步
-现在就看兴趣想做什么网站，当时在玩明日方舟，看到公开招募网站还挺实用的，就自己打算搞一个类似的。
-
->大神舍友：明日方舟是啥？<br>
->菜鸟本人：[阿·克·奈·子](https://ak.hypergryph.com/index)<br>
->大神舍友：就都是你老婆呗……<br>
-
+现在就看兴趣想做什么网站，当时在玩[明日方舟](https://ak.hypergryph.com/index)，看到公开招募网站还挺实用的，就自己打算搞一个类似的。
 各位骡（子）的刀（客塔）都知道，公开招募的时候选择特定的标签组合必定会出四星/五星/六星，公开招募工具就是为了这些标签的精准定位，而且现在各位骡的刀最常用的大概是百度搜索关键字`公开招募`结果第一位的那个，那就稍微借鉴一下[大佬的作品](https://ak.graueneko.xyz/)，这样就不用去费心设计了，专心实现功能就好。
 ### 获取数据
 要精确查找筛选标签，那首先要获取数据，要获取游戏数据最好还是直接去官网……本来想这么说的，但是官网并没有这方面的数据。但是可爱的玩家们总结了[干员数据表](http://wiki.joyme.com/arknights/%E5%B9%B2%E5%91%98%E6%95%B0%E6%8D%AE%E8%A1%A8)，这样我们就可以用爬虫搞到我们想要的数据啦！那就开始写爬虫，大家都懂的：
@@ -130,7 +125,108 @@ def FindFileNameList(file_path):
 file_path = os.path.dirname(os.path.dirname(__file__)) + '/'
 img_list, alpha_list = FindFileNameList(file_path)
 ```
-之后循环执行之前的内容就好，不再赘述了……
+之后循环执行之前的内容就好，不再赘述了……这里提一句，为了不让网页过于单调（毕竟大部分理工男没有艺术细菌），所以还想把yj之前发的视频在网站上循环播放，就直接用硕鼠去B站上下载了，大家不要学哦~
 
-
+### html和flask
+flask会在应用目录中的templates子目录寻找模板，所以要写html的话文件要存在templates文件夹里，把之前写flask的文件改一下：
+```python
+#src/index.py
+from flask import Flask, render_template
+app = Flask(__name__)
+@app.route("/")
+def index():
+  tags_dict = {
+    "资质":[
+        "新手", "资深干员", "高级资深干员"
+        ],
+    "位置":[
+        "近战位", "远程位"
+        ],
+    "性别":[
+        "男性干员", "女性干员"
+        ],
+    "种类":[
+        "先锋干员", "术师干员", "近卫干员", "医疗干员", 
+        "特种干员", "辅助干员", "重装干员", "狙击干员"
+        ],
+    "词缀":[
+        "治疗", "支援", "输出", "群攻", "减速", "生存", "防护",
+        "削弱", "位移", "控场", "爆发", "召唤", "快速复活", "费用回复"
+        ]
+  }
+  return render_template("index.html", tags_dict = tags_dict)
+```
+由于游戏更新，标签已经不是上面那些了，但这不影响网页编写，这里只是我比较懒不想改了。首先除了那些标签外，返回值是一个`render_template()`，里面的参数是扔到templates里的index.html和一个标签字典，这个index.html就是一个模板，将这个`tags_dict`字典传进去填充模板内容。
+那么怎么填充呢？flask使用一个叫做`Jinjia2`的模板引擎（具体是啥也不清楚），具体使用大概就是下面这样：
+```html
+<!-- src/templates/index.html -->
+<!DOCTYPE html>
+<html lang="zh-Hans">
+……
+{% if tags_dict %}
+  <table>
+    <thead>
+      <tr>
+        <th>类别</th><th>标签</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key in tags_dict %}
+        <tr>
+          <th>{{ key }}</th>
+          <td>
+            {% for tags in tags_dict[key] %}
+              <button>{{ tags }}</button>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+……
+</html>
+```
+看起来很简单，就是遍历字典的`key`再遍历`value`，自动生成一个html表格。上面的代码在开启flask服务器后，就可以看见下面的内容啦。
+<table>
+  <thead>
+    <tr>
+      <th>类别</th><th>标签</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>资质</th>
+      <td>
+        <kbd>新手</kbd><kbd>资深干员</kbd><kbd>高级资深干员</kbd>
+      </td>
+    </tr>
+    <tr>
+      <th>位置</th>
+      <td>
+        <kbd>近战位</kbd><kbd>远程位</kbd>
+      </td>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <td>
+        <kbd>男性干员</kbd><kbd>女性干员</kbd>
+      </td>
+    </tr>
+    <tr>
+      <th>种类</th>
+      <td>
+        <kbd>先锋干员</kbd><kbd>术师干员</kbd><kbd>近卫干员</kbd><kbd>医疗干员</kbd> 
+        <kbd>特种干员</kbd><kbd>辅助干员</kbd><kbd>重装干员</kbd><kbd>狙击干员</kbd>
+      </td>
+    </tr>
+    <tr>
+      <th>词缀</th>
+      <td>
+        <kbd>治疗</kbd><kbd>支援</kbd><kbd>输出</kbd><kbd>群攻</kbd><kbd>减速</kbd><kbd>生存</kbd><kbd>防护</kbd>
+        <kbd>削弱</kbd><kbd>位移</kbd><kbd>控场</kbd><kbd>爆发</kbd><kbd>召唤</kbd><kbd>快速复活</kbd><kbd>费用回复</kbd>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
