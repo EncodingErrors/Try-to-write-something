@@ -233,4 +233,79 @@ def index():
 </table>
 
 ### 样式变更
-说实话，明日方舟的UI设计是真滴好看，如果把网站做成同样的风格，即没有违和感又好看。这里推荐个网站[Palette Generator](https://palettegenerator.com/)，这就很方便的可以获得游戏中的配色了。
+说实话，明日方舟的UI设计是真滴好看，如果把网站做成同样的风格，即没有违和感又美观。这里推荐个网站[Palette Generator](https://palettegenerator.com/)，这就很方便的可以获得游戏中的配色了。由于在手机上截屏还是有点色差的，所以每个人识别的颜色样式可能都不太一样，但是不会差的太远。
+<table>
+  <tr>
+    <td>初始颜色</td><td>rgb(49, 49, 49)</td><td>#313131</td>
+  </tr>
+  <tr>
+    <td>变化后颜色</td><td>rgb(3,151,216)</td><td>#0397D8</td>
+  </tr>
+</table>
+
+这里的做法是，设定两个不同的class分别应用不同的样式，点击标签按钮后改变class，从而实现样式的改变。这就涉及到前端知识了，以前做数据可视化时发现在浏览器上渲染出来的可交互式图表很好用，所以自学了一些html，css和JavaScript用于修正图表。
+把之前的`index.html`里的`<button>`标签改成`<button class='not-selected'>`，这里的意思是把页面里的`<button>`元素“类名”（是这么翻译的吧？）设定为`not-selected`。现在可以把每个`class`“绑定”一个样式，一般由css编写，可以写在`index.html`里用`<style>`标签包裹住。这里就先写在css文件里：
+
+```css
+/* src/static/style.css */
+……
+button {
+  margin:某个值;
+  pandding:某个值;
+  width:某个值;
+  height:某个值;
+  color: white;
+}
+.not-selected {
+  background-color: rgb(49, 49, 49);
+}
+.selected {
+  background-color: rgb(3,151,216);
+}
+……
+```
+
+现在需要它随着用户点击而改变样式，即点击后，将class的`not-selected`改为`selected`。这时候就需要JavaScript了：
+
+```javascript
+// src/static/ChangeButtonClass.js
+……
+$("button").on("click", function(){
+  if($(this).attr("class") == "not-selected"){
+    $(this).attr("class", "selected");
+  }
+  else if($(this).attr("class") == "selected"){
+    $(this).attr("class", "not-selected");
+  }
+});
+……
+```
+
+### 前后交并
+按照习惯来说，每次点击标签按钮时都要进行一次查询，所以每次点击按钮都要向服务器发送一次询问信息，向接收一次服务器回应。每个人对自己的要求和标准都不一样，有的人就把所有的数据放在json文件里，不需要前后交流；有些人则是发送查询的tags，接收结果关键字用于填充jinja2模板；有些人会把tags发过去后，根据返回的关键字用js脚本生成新的html文档来个局部刷新；也有的人会根据tags查询结果在后端生成html文档再送到前端……方法因人而异。这里使用的是jQuery的axaj方法：
+
+```javscript
+// src/static/SendInfo.js
+jQuery.axaj({
+  type: type, //看情况写GET还是POST
+  url: url, //此处是查询的路由
+  data: data, //这里是需要向服务器发送的查询字段，也就是tags 
+  dataType: dataType, //从服务器获取字段的预期类型，比如此处填写"script"，那么会将返回字段立即当作脚本执行
+  success: function //完成时调用该函数
+});
+……
+```
+
+对应的，需要在`index.py`里添加一个查询方法（这里已添加新路由的方式）。
+
+```python
+#src/index.py
+……
+@app.route(url, methods = ["GET", "POST"]) #此处的url是设置的新路由
+def findStaff():
+  #此处为搜索算法，假设储存返回字段的变量为result
+  return result
+……
+```
+
+这样，整个网站的基本功能就实现啦！
