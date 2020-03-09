@@ -176,7 +176,7 @@ img_list, alpha_list = FindFileNameList(file_path)
 ```
 之后循环执行之前的内容就好，不再赘述了，结果如下：<br>
 ![处理立绘（全局）](/素材/傻瓜式项目：基于Flask的简单网站/处理立绘（全局）.png)<br>
-这里提一句，为了不让网页过于单调（毕竟大部分理工男没有艺术细菌），所以还想把yj之前发的视频在网站上循环播放，就直接用硕鼠去B站上下载了，大家不要学哦~
+这里提一句，为了不让网页过于单调（毕竟大部分理工男没有艺术细菌），所以还想把yj之前发的视频在网站上循环播放，毕竟yj的pv逼格很高。所以就用[某些工具](https://www.vidpaw.com/online-video-downloader/)从YouTube上下载下来了。
 
 ### flask的jinja2引擎
 flask会在应用目录中的templates子目录寻找模板，所以要写html的话文件要存在templates文件夹里，把之前写flask的文件改一下：
